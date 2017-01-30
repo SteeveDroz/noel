@@ -16,12 +16,12 @@ class User_model extends CI_Model {
   public function logIn($username, $password) {
     $query = $this->db->get_where('username', $username);
     $user = $query->result_object();
-    if ($user->password == $this->saltedPassword($password)) {
+    if ($user->password == $this->cryptedPassword($password)) {
       $this->saveToSession($user);
     }
   }
 
-  private function saltedPassword($password) {
+  private function cryptedPassword($password) {
     return sha1($password); // TODO Make it better
   }
 
