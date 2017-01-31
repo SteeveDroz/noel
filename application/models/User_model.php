@@ -8,17 +8,35 @@ class User_model extends CI_Model {
 
   public function hasAccess($access) {
     $sessionUser = $this->session->authenticatedUser;
-    $query = $this->db->get_where('id', $sessionUser->id);
+    $query = $this->db
+    ->from($this->table)
+    ->get_where('id', $sessionUser->id);
     $dbUser = $query->result_object();
     return $user->username == $sessionUser->username && $user->password == $sessionUser->password;
   }
 
   public function logIn($username, $password) {
-    $query = $this->db->get_where('username', $username);
+    $query = $this->db
+    ->from($this->table)
+    ->get_where('username', $username);
     $user = $query->result_object();
     if ($user->password == $this->cryptedPassword($password)) {
       $this->saveToSession($user);
     }
+  }
+
+  public function findAll() {
+    return $this->db
+    ->get($this->table)
+    ->result_object();
+  }
+
+  public function add($username, $password) {
+    $data = [
+      'username' => $username,
+      'password' => $password
+    ];
+    return $this->db->insert($this->table, $data);
   }
 
   private function cryptedPassword($password) {

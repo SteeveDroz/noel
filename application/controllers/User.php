@@ -7,7 +7,10 @@ class User extends CI_Controller {
   }
 
   public function index() {
+    $users = $this->user_model->findAll();
+
     $this->load->view('header');
+    $this->load->view('user/list', ['users' => $users]);
     $this->load->view('footer');
   }
 
@@ -15,11 +18,16 @@ class User extends CI_Controller {
     $this->load->helper('form');
     $this->load->library(['form_validation', 'table']);
 
-    $this->form_validation->set_rules('username', 'Username', 'trim|required');
+    $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[user.username]');
     $this->form_validation->set_rules('password', 'Password', 'trim|required');
 
     if ($this->form_validation->run()) {
-      echo 'OK';
+      $username = $this->input->post('username');
+      $password = $this->input->post('password');
+
+      $this->user_model->add($username, $password);
+
+      redirect('/');
     }
 
     $tableData = [
@@ -46,4 +54,4 @@ class User extends CI_Controller {
   }
 }
 
- ?>
+?>
