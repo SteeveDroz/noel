@@ -18,38 +18,19 @@ class User extends CI_Controller {
     $this->load->helper('form');
     $this->load->library(['form_validation', 'table']);
 
-    $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[user.username]');
+    $name = $this->input->post('name');
+    $password = $this->input->post('password');
+
+    $this->form_validation->set_rules('name', 'Name', 'trim|required|is_unique[user.name]');
     $this->form_validation->set_rules('password', 'Password', 'trim|required');
 
     if ($this->form_validation->run()) {
-      $username = $this->input->post('username');
-      $password = $this->input->post('password');
-
-      $this->user_model->add($username, $password);
-
+      $this->user_model->add($name, $password);
       redirect('/');
     }
 
-    $tableData = [
-      [
-        'Label',
-        'Field'
-      ],
-      [
-        form_label('Username', 'username'),
-        form_input('username', '', 'id="username"')
-      ],
-      [
-        form_label('Password', 'password'),
-        form_password('password', '', 'id="password"')
-      ],
-      [
-        ['data' => form_submit('add_user', 'Add user'), 'colspan' => 2, 'style' => 'text-align:center']
-      ]
-    ];
-
     $this->load->view('header', ['title' => 'Add user']);
-    $this->load->view('user/add', ['tableData' => $tableData]);
+    $this->load->view('user/add', ['name' => $name]);
     $this->load->view('footer');
   }
 }
