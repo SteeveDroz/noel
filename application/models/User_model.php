@@ -31,10 +31,12 @@ class User_model extends CI_Model {
     ->result_object();
   }
 
-  public function add($username, $password) {
+  public function add($name, $password) {
+    $this->load->model('role_model');
     $data = [
-      'username' => $username,
-      'password' => $password
+      'name' => $name,
+      'password' => $this->cryptedPassword($password),
+      'role' => $this->role_model->getLevel('USER')
     ];
     return $this->db->insert($this->table, $data);
   }
